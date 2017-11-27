@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+const path = require("path");
+const { spawn } = require("child_process");
+const { SonarJSApi } = require("../sonarjs_api/lib/api");
+
+const home = path.join(__dirname, "..");
+const projectVersion = "2.2-SNAPSHOT";
+const jarFile = path.join(home, "lib", `sonarjs-cli-${projectVersion}.jar`);
+const projectHome = process.cwd();
+
+const api = new SonarJSApi();
+
+const analyzer = spawn("java", [
+  "-Djava.awt.headless=true",
+  "-classpath",
+  jarFile,
+  `-Dsonarlint.home=${home}`,
+  `-Dproject.home=${projectHome}`,
+  "-Dorg.freemarker.loggerLibrary=none",
+  "Main",
+  process.argv
+]);
+
+console.log(jarFile);
+
+analyzer.stdout.on("data", data => {
+// TODO probably this does not work with large outputs (data is just a chunk of data)
+  api.read(data.toString("utf8"));
+  api.consoleLines().map(line => console.log(line));
+});
+
+analyzer.stderr.on("data", data => {
+  console.log(`stderr: ${data}`);
+});
+
+analyzer.on("close", code => {
+  console.log(`SonarJS exited with code ${code}`);
+});

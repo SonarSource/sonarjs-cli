@@ -1,0 +1,30 @@
+{
+  "name": "sonarjs",
+  "version": "0.1.0",
+  "description": "the sonarjs npm module",
+  "main": "webpack.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest",
+    "clear": "rm -rf lib/*",
+    "build": "yarn clear && yarn && tsc -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SonarSource/sonarjs-cli.git"
+  },
+  "keywords": ["sonarjs", "analyzer"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SonarSource/sonarjs-cli/issues"
+  },
+  "homepage": "https://github.com/SonarSource/sonarjs-cli#readme",
+  "devDependencies": {
+    "jest": "^21.2.1",
+    "ts-jest": "^21.2.3",
+    "typescript": "^2.6.1"
+  }
+}
