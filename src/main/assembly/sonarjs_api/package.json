@@ -2,7 +2,6 @@
   "name": "sonarjs",
   "version": "0.1.0",
   "description": "the sonarjs npm module",
-  "main": "webpack.config.js",
   "directories": {
     "lib": "lib"
   },
@@ -21,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/SonarSource/sonarjs-cli/issues"
   },
-  "homepage": "https://github.com/SonarSource/sonarjs-cli#readme",
+  "homepage": "https://github.com/SonarSource/sonarjs-cli",
   "devDependencies": {
     "jest": "^21.2.1",
     "ts-jest": "^21.2.3",

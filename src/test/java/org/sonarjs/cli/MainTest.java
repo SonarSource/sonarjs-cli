@@ -48,7 +48,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.sonarjs.cli.SonarProperties.PROJECT_HOME;
 
@@ -94,20 +93,6 @@ public class MainTest {
   public void testMain() {
     assertThat(main.run()).isEqualTo(Main.SUCCESS);
     verify(sonarLint).stop();
-  }
-
-  @Test
-  public void exitOnHelp() {
-    when(opts.isHelp()).thenReturn(true);
-    assertThat(main.run()).isEqualTo(Main.SUCCESS);
-    verifyZeroInteractions(sonarLint);
-  }
-
-  @Test
-  public void exitOnVersion() {
-    when(opts.isVersion()).thenReturn(true);
-    assertThat(main.run()).isEqualTo(Main.SUCCESS);
-    verifyZeroInteractions(sonarLint);
   }
 
   @Test

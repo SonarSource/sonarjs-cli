@@ -63,22 +63,25 @@ public class JsonReporterTest {
   public void should_print_to_output_stream() throws Exception {
     reporter.execute("someproject", new Date(), new ArrayList<>(), result, key -> RULE_DESCRIPTION);
     String output = new String(stream.toByteArray());
-    assertThat(output).contains("[]");
+    assertThat(output).contains("{\"issues\":[]");
   }
 
   @Test
   public void should_print_one_issue() throws Exception {
     List<Issue> issues = new ArrayList<>();
-    issues.add(createTestIssue("comp1", "S1000", "BLOCKER", 10, 2));
+    issues.add(createTestIssue("comp1", "S1000", "some message", "BLOCKER", 10, 2));
     reporter.execute("someproject", new Date(), toTrackables(issues), result, key -> RULE_DESCRIPTION);
 
     String output = new String(stream.toByteArray());
+    assertThat(output).isNotEmpty();
     assertThat(output).contains("{\"issues\":[{" +
       "\"file\":\"comp1\"" +
       ",\"key\":\"S1000\"" +
       ",\"severity\":\"BLOCKER\"" +
-      ",\"desc\":\"some rule description\"" +
+      ",\"title\":\"some rule description\"" +
+      ",\"message\":\"some message\"" +
       ",\"pos\":{\"line\":10,\"column\":2}" +
+      ",\"end_pos\":{\"line\":0,\"column\":0}" +
       "}]");
   }
 

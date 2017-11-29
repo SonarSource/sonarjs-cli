@@ -56,7 +56,7 @@ public class JsonReporter implements Reporter {
         try {
           issueToJSON(issue, ruleDescriptionProducer, jsonWriter);
         } catch (IOException e) {
-          LOGGER.error("Failed to convert to json " + shortIssueDescription(issue), e);
+          LOGGER.error("Failed to convert to json " + issue.toString(), e);
         }
       });
       jsonWriter.endArray();
@@ -77,11 +77,17 @@ public class JsonReporter implements Reporter {
     }
     writer.name("key").value(issue.getRuleKey());
     writer.name("severity").value(issue.getSeverity());
-    writer.name("desc").value(ruleDescriptionProducer.apply(issue.getRuleKey()).getName());
+    writer.name("title").value(ruleDescriptionProducer.apply(issue.getRuleKey()).getName());
+    writer.name("message").value(issue.getMessage());
     writer.name("pos");
     writer.beginObject();
     writer.name("line").value(issue.getStartLine());
     writer.name("column").value(issue.getStartLineOffset());
+    writer.endObject();
+    writer.name("end_pos");
+    writer.beginObject();
+    writer.name("line").value(issue.getEndLine());
+    writer.name("column").value(issue.getEndLineOffset());
     writer.endObject();
     writer.endObject();
   }

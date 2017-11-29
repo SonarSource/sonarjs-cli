@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestUtils {
-  public static Issue createTestIssue(String filePath, String ruleKey, String severity, int line, int column) {
+  public static Issue createTestIssue(String filePath, String ruleKey, String message, String severity, int line, int column) {
     ClientInputFile inputFile = mock(ClientInputFile.class);
     when(inputFile.getPath()).thenReturn(filePath);
 
@@ -36,6 +36,7 @@ public class TestUtils {
     when(issue.getInputFile()).thenReturn(inputFile);
     when(issue.getRuleKey()).thenReturn(ruleKey);
     when(issue.getSeverity()).thenReturn(severity);
+    when(issue.getMessage()).thenReturn(message);
     return issue;
   }
 }

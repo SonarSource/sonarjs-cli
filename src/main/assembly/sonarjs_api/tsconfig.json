@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    /* Basic Options */
     "target": "es6",
     "module": "commonjs",
     "lib": ["es2017"],

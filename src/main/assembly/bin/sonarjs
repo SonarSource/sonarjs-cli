@@ -4,7 +4,7 @@ const { spawn } = require("child_process");
 const { SonarJSApi } = require("../sonarjs_api/lib/api");
 
 const home = path.join(__dirname, "..");
-const projectVersion = "2.2-SNAPSHOT";
+const projectVersion = "0.1-SNAPSHOT";
 const jarFile = path.join(home, "lib", `sonarjs-cli-${projectVersion}.jar`);
 const projectHome = process.cwd();
 
@@ -17,7 +17,7 @@ const analyzer = spawn("java", [
   `-Dsonarlint.home=${home}`,
   `-Dproject.home=${projectHome}`,
   "-Dorg.freemarker.loggerLibrary=none",
-  "Main",
+  "org.sonarjs.cli.Main",
   process.argv
 ]);
 
