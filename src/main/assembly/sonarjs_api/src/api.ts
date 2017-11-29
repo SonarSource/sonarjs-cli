@@ -33,17 +33,19 @@ export class SonarJSApi {
       issue =>
         `${issue.severity}: ${issue.file} [${issue.pos.line}, ${
         issue.pos.column
-        }]: ${issue.desc}`
+        }]: ${issue.message}`
     );
   }
 }
 
 export interface Issue {
-  desc: String;
+  title: String;
+  message: String;
   file: String;
   key: String;
   severity: "BLOCKER" | "CRITICAL" | "MAJOR" | "MINOR" | "INFO";
   pos: Position;
+  end_pos: Position;
 }
 
 export interface Position {

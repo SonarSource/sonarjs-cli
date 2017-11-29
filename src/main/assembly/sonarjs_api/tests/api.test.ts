@@ -19,7 +19,7 @@
 */
 import { SonarJSApi } from "../src/api";
 
-const ANALYZER_JSON = `{"issues":[{"file":"/somepath/somejavascript.js","key":"javascript:S1000","severity":"MAJOR","desc":"some description","pos":{"line":5,"column":2}}]}`;
+const ANALYZER_JSON = `{"issues":[{"file":"/somepath/somejavascript.js","key":"javascript:S1000","severity":"MAJOR","title":"some description","message":"some message","pos":{"line":5,"column":2},"end_pos":{"line":5,"column":10}}]}`;
 
 describe("api", () => {
   it("collects issues from json outputs", () => {
@@ -27,24 +27,19 @@ describe("api", () => {
     api.read(ANALYZER_JSON);
     expect(api.issues().length).toEqual(1);
     const issue = api.issues()[0];
-    expect(issue.desc).toEqual("some description");
+    expect(issue.title).toEqual("some description");
+    expect(issue.message).toEqual("some message");
     expect(issue.file).toEqual("/somepath/somejavascript.js");
     expect(issue.key).toEqual("javascript:S1000");
     expect(issue.severity).toEqual("MAJOR");
     expect(issue.pos.line).toEqual(5);
     expect(issue.pos.column).toEqual(2);
   });
-  it("skips log messages", () => {
-    const api = new SonarJSApi();
-    api.read("INFO blah blah");
-    api.read("ERROR boom boom");
-    expect(api.issues().length).toEqual(0);
-  });
   it("prints issues as console lines", () => {
     const api = new SonarJSApi();
     api.read(ANALYZER_JSON);
     expect(api.consoleLines()[0]).toEqual(
-      "MAJOR: /somepath/somejavascript.js [5, 2]: some description"
+      "MAJOR: /somepath/somejavascript.js [5, 2]: some message"
     );
   });
 });

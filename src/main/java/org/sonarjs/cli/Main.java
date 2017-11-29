@@ -61,7 +61,6 @@ public class Main {
   int run() {
     LOGGER.setDisplayStackTrace(opts.showStack());
 
-    Stats stats = new Stats();
     try {
       SonarLint sonarLint = sonarLintFactory.createSonarLint(projectHome, opts.isUpdate(), opts.isVerbose());
       sonarLint.start(opts.isUpdate());
@@ -69,9 +68,9 @@ public class Main {
       Map<String, String> props = Util.toMap(opts.properties());
 
       if (opts.isInteractive()) {
-        runInteractive(stats, sonarLint, props, projectHome);
+        runInteractive(sonarLint, props, projectHome);
       } else {
-        runOnce(stats, sonarLint, props, projectHome);
+        runOnce(sonarLint, props, projectHome);
       }
     } catch (Exception e) {
       showError("Error executing SonarJS", e, opts.showStack(), opts.isVerbose());
@@ -89,12 +88,12 @@ public class Main {
     return Paths.get(projectHome);
   }
 
-  private void runOnce(Stats stats, SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
+  private void runOnce(SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
     sonarLint.runAnalysis(props, fileFinder, projectHome);
     sonarLint.stop();
   }
 
-  private void runInteractive(Stats stats, SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
+  private void runInteractive(SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
     do {
       sonarLint.runAnalysis(props, fileFinder, projectHome);
     } while (waitForUser());
