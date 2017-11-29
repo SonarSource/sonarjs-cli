@@ -22,11 +22,10 @@ const analyzer = spawn("java", [
 ]);
 
 console.log(jarFile);
+let result = "";
 
 analyzer.stdout.on("data", data => {
-// TODO probably this does not work with large outputs (data is just a chunk of data)
-  api.read(data.toString("utf8"));
-  api.consoleLines().map(line => console.log(line));
+  result += data.toString("utf8");
 });
 
 analyzer.stderr.on("data", data => {
@@ -34,5 +33,6 @@ analyzer.stderr.on("data", data => {
 });
 
 analyzer.on("close", code => {
-  console.log(`SonarJS exited with code ${code}`);
+  api.read(result);
+  api.consoleLines().map(line => console.log(line));
 });

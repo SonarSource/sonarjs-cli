@@ -21,10 +21,7 @@ export class SonarJSApi {
   private _issues: Issue[] = [];
 
   public read(data: string) {
-    if (data.startsWith('{"issues":[')) {
-      const issues = JSON.parse(data).issues;
-      this._issues = this._issues.concat(issues);
-    }
+    this._issues = JSON.parse(data).issues;
   }
 
   public issues(): Issue[] {
@@ -35,7 +32,7 @@ export class SonarJSApi {
     return this._issues.map(
       issue =>
         `${issue.severity}: ${issue.file} [${issue.pos.line}, ${
-          issue.pos.column
+        issue.pos.column
         }]: ${issue.desc}`
     );
   }

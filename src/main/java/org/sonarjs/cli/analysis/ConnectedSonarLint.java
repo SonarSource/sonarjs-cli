@@ -69,13 +69,10 @@ public class ConnectedSonarLint extends SonarLint {
     GlobalStorageStatus globalStorageStatus = engine.getGlobalStorageStatus();
 
     if (forceUpdate) {
-      LOGGER.info("Updating binding..");
       update();
     } else if (globalStorageStatus == null) {
-      LOGGER.info("No binding storage found. Updating..");
       update();
     } else if (globalStorageStatus.isStale()) {
-      LOGGER.info("Binding storage is stale. Updating..");
       update();
     } else {
       checkModuleStatus();
@@ -90,13 +87,9 @@ public class ConnectedSonarLint extends SonarLint {
 
     ModuleStorageStatus moduleStorageStatus = engine.getModuleStorageStatus(moduleKey);
     if (moduleStorageStatus == null) {
-      LOGGER.info("Updating data for module..");
       engine.updateModule(getServerConfiguration(server), moduleKey);
-      LOGGER.info("Module updated");
     } else if (moduleStorageStatus.isStale()) {
-      LOGGER.info("Module's data is stale. Updating..");
       engine.updateModule(getServerConfiguration(server), moduleKey);
-      LOGGER.info("Module updated");
     }
   }
 
@@ -107,7 +100,6 @@ public class ConnectedSonarLint extends SonarLint {
       .findAny()
       .orElseThrow(() -> new IllegalStateException("Project key '" + moduleKey + "' not found in the SonarQube server"));
     updateModule();
-    LOGGER.info("Binding updated");
   }
 
   private void updateModule() {
@@ -207,17 +199,17 @@ public class ConnectedSonarLint extends SonarLint {
     }
 
     @Override public void debug(String message, Exception e) {
-      LOGGER.debug(message, e);
+
     }
 
     @Override public void debug(String message) {
-      LOGGER.debug(message);
+
     }
   }
 
   private static class MyConsole implements Console {
     @Override public void info(String message) {
-      LOGGER.info(message);
+
     }
 
     @Override public void error(String message, Throwable t) {

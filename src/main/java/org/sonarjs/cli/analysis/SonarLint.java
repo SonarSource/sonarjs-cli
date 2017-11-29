@@ -48,13 +48,6 @@ public abstract class SonarLint {
       throw new IllegalStateException("Error preparing list of files to analyze", e);
     }
 
-    if (inputFiles.isEmpty()) {
-      LOGGER.warn("No files to analyze");
-      return;
-    } else {
-      LOGGER.debug(String.format("Submitting %d files for analysis", inputFiles.size()));
-    }
-
     doAnalysis(properties, inputFiles, projectHome);
   }
 

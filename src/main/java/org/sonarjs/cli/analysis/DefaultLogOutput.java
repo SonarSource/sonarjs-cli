@@ -25,29 +25,23 @@ import org.sonarsource.sonarlint.core.client.api.common.LogOutput;
 class DefaultLogOutput implements LogOutput {
 
   private final Logger logger;
-  private final boolean verbose;
 
-  public DefaultLogOutput(Logger logger, boolean verbose) {
+  public DefaultLogOutput(Logger logger) {
     this.logger = logger;
-    this.verbose = verbose;
   }
 
   @Override
   public void log(String formattedMessage, Level level) {
     switch (level) {
       case TRACE:
+      case INFO:
+      case WARN:
       case DEBUG:
-        if (verbose) {
-          logger.debug(formattedMessage);
-        }
+        // We can't log anything on stdout
         break;
       case ERROR:
         logger.error(formattedMessage);
         break;
-      case INFO:
-      case WARN:
-      default:
-        logger.info(formattedMessage);
     }
   }
 }

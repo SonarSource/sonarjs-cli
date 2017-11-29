@@ -23,19 +23,15 @@ import java.io.PrintStream;
 
 public class Logger {
   private static volatile Logger instance;
-  private boolean debugEnabled = false;
   private boolean displayStackTrace = false;
-  private PrintStream stdOut;
   private PrintStream stdErr;
 
   private Logger() {
     this.stdErr = System.err;
-    this.stdOut = System.out;
   }
   
-  public Logger(PrintStream stdOut, PrintStream stdErr) {
+  public Logger(PrintStream stdErr) {
     this.stdErr = stdErr;
-    this.stdOut = stdOut;
   }
 
   public static Logger get() {
@@ -45,44 +41,12 @@ public class Logger {
     return instance;
   }
 
-  public static void set(PrintStream stdOut, PrintStream stdErr) {
-    get().stdOut = stdOut;
+  public static void set(PrintStream stdErr) {
     get().stdErr = stdErr;
-  }
-
-  public void setDebugEnabled(boolean debugEnabled) {
-    this.debugEnabled = debugEnabled;
   }
 
   public void setDisplayStackTrace(boolean displayStackTrace) {
     this.displayStackTrace = displayStackTrace;
-  }
-
-  public boolean isDebugEnabled() {
-    return debugEnabled;
-  }
-
-  public void debug(String message) {
-    if (isDebugEnabled()) {
-      stdOut.println("DEBUG: " + message);
-    }
-  }
-
-  public void debug(String message, Throwable t) {
-    if (isDebugEnabled()) {
-      stdErr.println("DEBUG: " + message);
-      if (displayStackTrace) {
-        t.printStackTrace(stdErr);
-      }
-    }
-  }
-
-  public void info(String message) {
-    stdOut.println("INFO: " + message);
-  }
-
-  public void warn(String message) {
-    stdOut.println("WARN: " + message);
   }
 
   public void error(String message) {

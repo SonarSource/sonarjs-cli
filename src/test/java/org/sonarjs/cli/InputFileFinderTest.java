@@ -72,7 +72,7 @@ public class InputFileFinderTest {
     PrintStream outStream = new PrintStream(out);
     err = new ByteArrayOutputStream();
     PrintStream errStream = new PrintStream(err);
-    Logger.set(outStream, errStream);
+    Logger.set(errStream);
   }
 
   private String getLogs(ByteArrayOutputStream stream) {

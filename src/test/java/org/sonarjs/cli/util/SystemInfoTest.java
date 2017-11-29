@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class SystemInfoTest {
@@ -70,21 +68,4 @@ public class SystemInfoTest {
     when(mockSystem.getProperty("os.name")).thenReturn("linux");
   }
 
-  @Test
-  public void should_print() {
-    mockOs();
-    mockJava();
-    when(mockSystem.getenv("SONARLINT_OPTS")).thenReturn("arg");
-
-    SystemInfo.print(logger);
-
-    verify(mockSystem).getProperty("java.version");
-    verify(mockSystem).getProperty("os.version");
-    verify(mockSystem).getenv("SONARLINT_OPTS");
-
-    verify(logger).info("Java 1.9 oracle (64-bit)");
-    verify(logger).info("linux 2.5 x64");
-    verify(logger).info("SONARLINT_OPTS=arg");
-    verifyNoMoreInteractions(logger);
-  }
 }

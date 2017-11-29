@@ -71,7 +71,7 @@ public class JsonReporter implements Reporter {
     writer.beginObject();
     ClientInputFile inputFile = issue.getInputFile();
     if (inputFile == null) {
-      LOGGER.warn("Issue without file : " + shortIssueDescription(issue));
+      LOGGER.error("Issue without file : " + shortIssueDescription(issue));
     } else {
       writer.name("file").value(inputFile.getPath());
     }

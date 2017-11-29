@@ -29,15 +29,6 @@ public class SystemInfo {
     SystemInfo.system = system;
   }
 
-  public static void print(Logger logger) {
-    logger.info(java());
-    logger.info(os());
-    String runnerOpts = system.getenv("SONARLINT_OPTS");
-    if (runnerOpts != null) {
-      logger.info("SONARLINT_OPTS=" + runnerOpts);
-    }
-  }
-
   public static String getVersion() {
     String version = "unknown";
 

@@ -164,26 +164,6 @@ public class Options {
     return task;
   }
 
-  public static void printUsage() {
-    // TODO REMOVE ALL OF THIS
-    LOGGER.info("");
-    LOGGER.info("usage: sonarjs [options]");
-    LOGGER.info("");
-    LOGGER.info("Options:");
-    LOGGER.info(" -u,--update              Update binding with SonarQube server before analysis");
-    LOGGER.info(" -D,--define <arg>        Define property");
-    LOGGER.info(" -e,--errors              Produce execution error messages");
-    LOGGER.info(" -h,--help                Display help information");
-    LOGGER.info(" -v,--version             Display version information");
-    LOGGER.info(" -X,--debug               Produce execution debug output");
-    LOGGER.info(" -i,--interactive         Run interactively");
-    LOGGER.info(" --html-report <path>     HTML report output path (relative or absolute)");
-    LOGGER.info(" --src <glob pattern>     GLOB pattern to identify source files");
-    LOGGER.info(" --tests <glob pattern>   GLOB pattern to identify test files");
-    LOGGER.info(" --exclude <glob pattern> GLOB pattern to exclude files");
-    LOGGER.info(" --charset <name>         Character encoding of the source files");
-  }
-
   private static void appendPropertyTo(String arg, Properties props) {
     final String key;
     final String value;

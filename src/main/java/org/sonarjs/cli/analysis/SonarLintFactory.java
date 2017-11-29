@@ -73,7 +73,7 @@ public class SonarLintFactory {
       if (mustBeConnected) {
         throw new IllegalStateException("Can't update project - no binding defined in: " + projectConfigPath.toAbsolutePath());
       }
-      return createStandalone(verbose);
+      return createStandalone();
     }
 
     ProjectConfiguration project = configurationReader.readProject(projectConfigPath);
@@ -102,7 +102,7 @@ public class SonarLintFactory {
           globalConfigPath.toAbsolutePath(), project.serverId())));
     }
 
-    return createConnected(server, projectKey, verbose);
+    return createConnected(server, projectKey);
   }
 
   private static List<SonarQubeServer> getServers(GlobalConfiguration conf) {
@@ -114,18 +114,16 @@ public class SonarLintFactory {
     return servers;
   }
 
-  private static SonarLint createConnected(SonarQubeServer server, String projectKey, boolean verbose) {
-    LOGGER.info(String.format("Connected mode (%s)", projectKey));
+  private static SonarLint createConnected(SonarQubeServer server, String projectKey) {
     ConnectedGlobalConfiguration config = ConnectedGlobalConfiguration.builder()
-      .setLogOutput(new DefaultLogOutput(LOGGER, verbose))
+      .setLogOutput(new DefaultLogOutput(LOGGER))
       .setServerId(server.id())
       .build();
     ConnectedSonarLintEngineImpl engine = new ConnectedSonarLintEngineImpl(config);
     return new ConnectedSonarLint(engine, server, projectKey);
   }
 
-  private static SonarLint createStandalone(boolean verbose) {
-    LOGGER.info("Standalone mode");
+  private static SonarLint createStandalone() {
     URL[] plugins;
 
     try {
@@ -136,7 +134,7 @@ public class SonarLintFactory {
 
     StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
       .addPlugins(plugins)
-      .setLogOutput(new DefaultLogOutput(LOGGER, verbose))
+      .setLogOutput(new DefaultLogOutput(LOGGER))
       .build();
 
     StandaloneSonarLintEngine engine = new StandaloneSonarLintEngineImpl(config);

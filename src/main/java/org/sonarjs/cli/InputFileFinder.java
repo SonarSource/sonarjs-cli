@@ -116,7 +116,6 @@ public class InputFileFinder {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
       if (Files.isHidden(dir)) {
-        LOGGER.debug("Ignoring hidden directory: " + dir.toString());
         return FileVisitResult.SKIP_SUBTREE;
       }
 

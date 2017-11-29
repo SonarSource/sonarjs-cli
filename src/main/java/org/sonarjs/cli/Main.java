@@ -35,7 +35,6 @@ import org.sonarjs.cli.analysis.SonarLintFactory;
 import org.sonarjs.cli.config.ConfigurationReader;
 import org.sonarjs.cli.util.Logger;
 import org.sonarjs.cli.util.System2;
-import org.sonarjs.cli.util.SystemInfo;
 import org.sonarjs.cli.util.Util;
 
 import static org.sonarjs.cli.SonarProperties.PROJECT_HOME;
@@ -60,14 +59,7 @@ public class Main {
   }
 
   int run() {
-    LOGGER.setDebugEnabled(opts.isVerbose());
     LOGGER.setDisplayStackTrace(opts.showStack());
-
-    SystemInfo.print(LOGGER);
-
-    if (opts.showStack()) {
-      LOGGER.info("Error stacktraces are turned on.");
-    }
 
     Stats stats = new Stats();
     try {
@@ -82,8 +74,7 @@ public class Main {
         runOnce(stats, sonarLint, props, projectHome);
       }
     } catch (Exception e) {
-      displayExecutionResult(stats, "FAILURE");
-      showError("Error executing SonarLint", e, opts.showStack(), opts.isVerbose());
+      showError("Error executing SonarJS", e, opts.showStack(), opts.isVerbose());
       return ERROR;
     }
 
@@ -99,17 +90,13 @@ public class Main {
   }
 
   private void runOnce(Stats stats, SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
-    stats.start();
     sonarLint.runAnalysis(props, fileFinder, projectHome);
     sonarLint.stop();
-    displayExecutionResult(stats, "SUCCESS");
   }
 
   private void runInteractive(Stats stats, SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
     do {
-      stats.start();
       sonarLint.runAnalysis(props, fileFinder, projectHome);
-      displayExecutionResult(stats, "SUCCESS");
     } while (waitForUser());
 
     sonarLint.stop();
@@ -119,8 +106,6 @@ public class Main {
     if (inputReader == null) {
       inputReader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     }
-    LOGGER.info("");
-    LOGGER.info("<Press enter to restart analysis or Ctrl+C to exit the interactive mode>");
     String line = inputReader.readLine();
     return line != null;
   }
@@ -140,7 +125,6 @@ public class Main {
       parsedOpts = Options.parse(args);
     } catch (ParseException e) {
       LOGGER.error("Error parsing arguments: " + e.getMessage(), e);
-      Options.printUsage();
       system.exit(ERROR);
       return;
     }
@@ -164,16 +148,6 @@ public class Main {
 
     int ret = new Main(parsedOpts, sonarLintFactory, fileFinder, getProjectHome(system)).run();
     system.exit(ret);
-    return;
-  }
-
-  private static void displayExecutionResult(Stats stats, String resultMsg) {
-    String dashes = "------------------------------------------------------------------------";
-    LOGGER.info(dashes);
-    LOGGER.info("EXECUTION " + resultMsg);
-    LOGGER.info(dashes);
-    stats.stop();
-    LOGGER.info(dashes);
   }
 
   private static void showError(String message, Throwable e, boolean showStackTrace, boolean debug) {

@@ -31,13 +31,9 @@ class Stats {
   }
 
   Stats stop() {
-    long stopTime = System.currentTimeMillis() - startTime;
-    LOGGER.info("Total time: " + formatTime(stopTime));
 
     System.gc();
-    Runtime r = Runtime.getRuntime();
-    long mb = 1024L * 1024;
-    LOGGER.info("Final Memory: " + (r.totalMemory() - r.freeMemory()) / mb + "M/" + r.totalMemory() / mb + "M");
+    Runtime.getRuntime();
 
     return this;
   }

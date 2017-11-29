@@ -57,7 +57,6 @@ public class MainTest {
   private SonarLint sonarLint;
   private InputFileFinder fileFinder;
   private Options opts;
-  private ByteArrayOutputStream out;
   private ByteArrayOutputStream err;
 
   @Rule
@@ -78,11 +77,9 @@ public class MainTest {
   }
 
   private void setUpLogger() {
-    out = new ByteArrayOutputStream();
-    PrintStream outStream = new PrintStream(out);
     err = new ByteArrayOutputStream();
     PrintStream errStream = new PrintStream(err);
-    Logger.set(outStream, errStream);
+    Logger.set(errStream);
   }
 
   private String getLogs(ByteArrayOutputStream stream) {
@@ -110,7 +107,6 @@ public class MainTest {
     Exception e = createException("invalid operation", "analysis failed");
     doThrow(e).when(sonarLint).runAnalysis(anyMapOf(String.class, String.class), any(InputFileFinder.class), any(Path.class));
     assertThat(main.run()).isEqualTo(Main.ERROR);
-    assertThat(getLogs(out)).contains("EXECUTION FAILURE");
     assertThat(getLogs(err)).contains("invalid operation");
   }
 
@@ -159,21 +155,10 @@ public class MainTest {
   }
 
   @Test
-  public void verbose() {
-    assertThat(main.run()).isEqualTo(Main.SUCCESS);
-    assertThat(Logger.get().isDebugEnabled()).isFalse();
-
-    when(opts.isVerbose()).thenReturn(true);
-    assertThat(main.run()).isEqualTo(Main.SUCCESS);
-    assertThat(Logger.get().isDebugEnabled()).isTrue();
-  }
-
-  @Test
   public void errorStop() {
     Exception e = createException("invalid operation", "analysis failed");
     doThrow(e).when(sonarLint).stop();
     assertThat(main.run()).isEqualTo(Main.ERROR);
-    assertThat(getLogs(out)).contains("EXECUTION FAILURE");
     assertThat(getLogs(err)).contains("invalid operation");
   }
 
@@ -182,7 +167,6 @@ public class MainTest {
     Exception e = createException("invalid operation", "analysis failed");
     doThrow(e).when(sonarLint).runAnalysis(anyMapOf(String.class, String.class), eq(fileFinder), any(Path.class));
     assertThat(main.run()).isEqualTo(Main.ERROR);
-    assertThat(getLogs(out)).contains("EXECUTION FAILURE");
     assertThat(getLogs(err)).contains("invalid operation");
   }
 
@@ -192,7 +176,6 @@ public class MainTest {
     Exception e = createException("invalid operation", "analysis failed");
     doThrow(e).when(sonarLint).runAnalysis(anyMapOf(String.class, String.class), any(InputFileFinder.class), any(Path.class));
     assertThat(main.run()).isEqualTo(Main.ERROR);
-    assertThat(getLogs(out)).contains("EXECUTION FAILURE");
     assertThat(getLogs(err)).contains("invalid operation");
     assertThat(getLogs(err)).contains("analysis failed");
   }
