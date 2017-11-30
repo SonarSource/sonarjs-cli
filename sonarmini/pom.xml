@@ -27,25 +27,12 @@
     </license>
   </licenses>
 
-  <scm>
-    <connection>scm:git:git@github.com:SonarSource/sonarjs-cli.git</connection>
-    <developerConnection>scm:git:git@github.com:SonarSource/sonarjs-cli.git</developerConnection>
-    <url>https://github.com/SonarSource/sonarjs-cli</url>
-    <tag>HEAD</tag>
-  </scm>
-
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/SonarSource/sonarjs-cli/issues</url>
-  </issueManagement>
-
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <gitRepositoryName>sonarjs-cli</gitRepositoryName>
     <sonarlint.version>2.9.0.276</sonarlint.version>
     <sonar.javascript.version>3.3.0.5702</sonar.javascript.version>
     <!-- Release: enable publication to Bintray -->
-    <artifactsToPublish>${project.groupId}:${project.artifactId}:zip</artifactsToPublish>
   </properties>
 
   <dependencies>
@@ -160,27 +147,6 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <finalName>sonarjs-cli-${project.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-              <escapeString>\</escapeString>
-              <descriptors>
-                <descriptor>${project.basedir}/assembly.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
@@ -192,10 +158,10 @@
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <minsize>23000000</minsize>
-                  <maxsize>25000000</maxsize>
+                  <minsize>21000000</minsize>
+                  <maxsize>22000000</maxsize>
                   <files>
-                    <file>${project.build.directory}/sonarjs-cli-${project.version}.zip</file>
+                    <file>${project.build.directory}/sonarjs-cli-${project.version}.jar</file>
                   </files>
                 </requireFilesSize>
               </rules>
