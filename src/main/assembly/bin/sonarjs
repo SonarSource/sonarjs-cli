@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+const path = require("path");
+const { spawn } = require("child_process");
+const { SonarJSApi } = require("../sonarjs_api/lib/api");
+
+const home = path.join(__dirname, "..");
+const projectVersion = "0.1-SNAPSHOT";
+const jarFile = path.join(home, "lib", `sonarjs-cli-${projectVersion}.jar`);
+const projectHome = process.cwd();
+
+const api = new SonarJSApi();
+
+const analyzer = spawn("java", [
+  "-Djava.awt.headless=true",
+  "-classpath",
+  jarFile,
+  `-Dsonarlint.home=${home}`,
+  `-Dproject.home=${projectHome}`,
+  "-Dorg.freemarker.loggerLibrary=none",
+  "org.sonarjs.cli.Main",
+  process.argv
+]);
+
+console.log(jarFile);
+let result = "";
+
+analyzer.stdout.on("data", data => {
+  result += data.toString("utf8");
+});
+
+analyzer.stderr.on("data", data => {
+  console.log(`stderr: ${data}`);
+});
+
+analyzer.on("close", code => {
+  api.read(result);
+  api.consoleLines().map(line => console.log(line));
+});
