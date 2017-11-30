@@ -1,7 +1,7 @@
 
 # ---- Maven
-target/
-dependency-reduced-pom.xml
+sonarmini/target/
+sonarmini/dependency-reduced-pom.xml
 
 # ---- IntellijIDEA
 *.iws
@@ -30,6 +30,6 @@ Thumbs.db
 Desktop.ini
 
 # JS
-src/main/assembly/sonarjs_api/lib
+lib
 # Npm
-**/node_modules
+node_modules

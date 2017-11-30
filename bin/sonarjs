@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const path = require("path");
 const { spawn } = require("child_process");
-const { SonarJSApi } = require("../sonarjs_api/lib/api");
+const { SonarJSApi } = require("../lib/api");
 
-const home = path.join(__dirname, "..");
-const projectVersion = "0.1-SNAPSHOT";
-const jarFile = path.join(home, "lib", `sonarjs-cli-${projectVersion}.jar`);
+const home = path.join(__dirname, "..", "lib");
+const projectVersion = "0.1-SNAPSHOT"; // TODO make this dynamic somehow!
+const jarFile = path.join(home, `sonarjs-cli-${projectVersion}.jar`);
 const projectHome = process.cwd();
 
 const api = new SonarJSApi();
@@ -16,6 +16,7 @@ const analyzer = spawn("java", [
   jarFile,
   `-Dsonarlint.home=${home}`,
   `-Dproject.home=${projectHome}`,
+  `-DX`,
   "-Dorg.freemarker.loggerLibrary=none",
   "org.sonarjs.cli.Main",
   process.argv
