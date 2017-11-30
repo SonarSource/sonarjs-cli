@@ -5,10 +5,15 @@
   "directories": {
     "lib": "lib"
   },
+  "bin": "./bin/sonarjs",
   "scripts": {
     "test": "jest",
     "clear": "rm -rf lib/*",
-    "build": "yarn clear && yarn && tsc -p ."
+    "build-mvn": "cd sonarmini && mvn clean install && cd ..",
+    "copy-jars":
+      "cp sonarmini/target/sonarjs-cli-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp sonarmini/target/plugins/* lib/plugins/",
+    "build":
+      "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -16,7 +21,7 @@
   },
   "keywords": ["sonarjs", "analyzer"],
   "author": "",
-  "license": "ISC",
+  "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/SonarSource/sonarjs-cli/issues"
   },

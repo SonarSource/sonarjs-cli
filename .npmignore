@@ -1,7 +1,12 @@
+src
+tests
+sonarmini
 
-# ---- Maven
-sonarmini/target/
-sonarmini/dependency-reduced-pom.xml
+# Npm
+node_modules
+
+# Previous build
+sonarjs*.tgz
 
 # ---- IntellijIDEA
 *.iws
@@ -15,7 +20,6 @@ sonarmini/dependency-reduced-pom.xml
 .settings
 
 # ---- Mac OS X
-.DS_Store
 Icon?
 # Thumbnails
 ._*
@@ -29,9 +33,13 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
-# JS
-lib
-# Npm
-node_modules
+# CI
+.travis.yml
+cix.sh
+travis.sh
 
-sonarjs-*.tgz
+# Dev Configurations
+jest.config.js
+third-party-licenses.sh
+tsconfig.json
+yarn.lock
