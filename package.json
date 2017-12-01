@@ -5,6 +5,7 @@
   "directories": {
     "lib": "lib"
   },
+  "bin": "./bin/sonarjs",
   "scripts": {
     "test": "jest",
     "clear": "rm -rf lib/*",

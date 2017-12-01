@@ -1,0 +1,34 @@
+src
+tests
+sonarmini
+
+# Npm
+node_modules
+
+# Previous build
+sonarjs*.tgz
+
+# ---- IntellijIDEA
+*.iws
+*.iml
+*.ipr
+.idea/
+
+# ---- Eclipse
+.classpath
+.project
+.settings
+
+# ---- Mac OS X
+Icon?
+# Thumbnails
+._*
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# ---- Windows
+# Windows image file caches
+Thumbs.db 
+# Folder config file
+Desktop.ini

@@ -21,8 +21,7 @@ const analyzer = spawn("java", [
   "org.sonarjs.cli.Main",
   process.argv
 ]);
-
-console.log(jarFile);
+console.log("SonarJS Analyzing...");
 let result = "";
 
 analyzer.stdout.on("data", data => {
@@ -36,4 +35,5 @@ analyzer.stderr.on("data", data => {
 analyzer.on("close", code => {
   api.read(result);
   api.consoleLines().map(line => console.log(line));
+  console.log("...SonarJS Analysis Complete");
 });
