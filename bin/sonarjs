@@ -21,7 +21,8 @@ const analyzer = spawn("java", [
   "org.sonarjs.cli.Main",
   process.argv
 ]);
-console.log("SonarJS Analyzing...");
+process.stdout.write("- Analyzing " + projectHome);
+const animation = waitingAnimation();
 let result = "";
 
 analyzer.stdout.on("data", data => {
@@ -34,6 +35,19 @@ analyzer.stderr.on("data", data => {
 
 analyzer.on("close", code => {
   api.read(result);
+  clearInterval(animation);
+  process.stdout.write("\r"); // Delete animation last sprite
   api.consoleLines().map(line => console.log(line));
-  console.log("...SonarJS Analysis Complete");
 });
+
+// From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
+function waitingAnimation() {
+  return (function() {
+    var sprites = ["\\", "|", "/", "-"];
+    var i = 0;
+    return setInterval(function() {
+      process.stdout.write("\r" + sprites[i++]);
+      i &= 3;
+    }, 250);
+  })();
+}

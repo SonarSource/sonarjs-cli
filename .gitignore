@@ -33,3 +33,5 @@ Desktop.ini
 lib
 # Npm
 node_modules
+
+sonarjs-*.tgz
