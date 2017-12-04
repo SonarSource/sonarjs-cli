@@ -39,7 +39,7 @@ describe("api", () => {
     const api = new SonarJSApi();
     api.read(ANALYZER_JSON);
     expect(api.consoleLines()[0]).toEqual(
-      "MAJOR: /somepath/somejavascript.js [5, 2]: some message"
+      "MAJOR - S1000: /somepath/somejavascript.js [5, 3]: some message"
     );
   });
 });

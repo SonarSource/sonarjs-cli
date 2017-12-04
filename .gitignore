@@ -1,7 +1,7 @@
 
 # ---- Maven
-sonarmini/target/
-sonarmini/dependency-reduced-pom.xml
+mini-scanner/target/
+mini-scanner/dependency-reduced-pom.xml
 
 # ---- IntellijIDEA
 *.iws
