@@ -9,9 +9,9 @@
   "scripts": {
     "test": "jest",
     "clear": "rm -rf lib",
-    "build-mvn": "cd sonarmini && mvn clean install && cd ..",
+    "build-mvn": "cd mini-scanner && mvn clean install && cd ..",
     "copy-jars":
-      "mkdir lib && cp sonarmini/target/sonarjs-cli-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp sonarmini/target/plugins/* lib/plugins/",
+      "mkdir lib && cp mini-scanner/target/mini-scanner-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp mini-scanner/target/plugins/* lib/plugins/",
     "build":
       "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p ."
   },
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/SonarSource/sonarjs-cli",
   "devDependencies": {
+    "@types/node": "^8.0.54",
     "jest": "^21.2.1",
     "ts-jest": "^21.2.3",
     "typescript": "^2.6.1"

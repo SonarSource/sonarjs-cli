@@ -29,11 +29,9 @@ export class SonarJSApi {
   }
 
   public consoleLines(): string[] {
+    // prettier-ignore
     return this._issues.map(
-      issue =>
-        `${issue.severity}: ${issue.file} [${issue.pos.line}, ${
-        issue.pos.column
-        }]: ${issue.message}`
+      issue => `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${issue.pos.line}, ${issue.pos.column + 1}]: ${issue.message}`
     );
   }
 }
