@@ -8,10 +8,10 @@
   "bin": "./bin/sonarjs",
   "scripts": {
     "test": "jest",
-    "clear": "rm -rf lib/*",
+    "clear": "rm -rf lib",
     "build-mvn": "cd sonarmini && mvn clean install && cd ..",
     "copy-jars":
-      "cp sonarmini/target/sonarjs-cli-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp sonarmini/target/plugins/* lib/plugins/",
+      "mkdir lib && cp sonarmini/target/sonarjs-cli-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp sonarmini/target/plugins/* lib/plugins/",
     "build":
       "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p ."
   },
