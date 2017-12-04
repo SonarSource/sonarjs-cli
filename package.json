@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/SonarSource/sonarjs-cli",
   "devDependencies": {
+    "@types/node": "^8.0.54",
     "jest": "^21.2.1",
     "ts-jest": "^21.2.3",
     "typescript": "^2.6.1"
