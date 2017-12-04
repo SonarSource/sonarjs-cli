@@ -32,3 +32,14 @@ Icon?
 Thumbs.db 
 # Folder config file
 Desktop.ini
+
+# CI
+.travis.yml
+cix.sh
+travis.sh
+
+# Dev Configurations
+jest.config.js
+third-party-licenses.sh
+tsconfig.json
+yarn.lock
