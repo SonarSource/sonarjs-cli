@@ -11,7 +11,8 @@
     "clear": "rm -rf lib",
     "build-mvn": "cd mini-scanner && mvn clean install && cd ..",
     "copy-jars": "mkdir lib && cp mini-scanner/target/mini-scanner-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp mini-scanner/target/plugins/* lib/plugins/",
-    "build": "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p ."
+    "build": "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p .",
+    "postinstall": "./bin/install_jre.js"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,9 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
-    "node-jre": "^0.2.3"
+    "progress": "^2.0.0",
+    "request": "^2.83.0",
+    "rmdir": "^1.2.0",
+    "tar-fs": "^1.16.0"
   }
 }
