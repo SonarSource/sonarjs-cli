@@ -11,8 +11,7 @@
     "clear": "rm -rf lib",
     "build-mvn": "cd mini-scanner && mvn clean install && cd ..",
     "copy-jars": "mkdir lib && cp mini-scanner/target/mini-scanner-*-SNAPSHOT.jar lib/ && mkdir lib/plugins && cp mini-scanner/target/plugins/* lib/plugins/",
-    "build": "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p .",
-    "postinstall": "./bin/install_jre.js"
+    "build": "yarn clear && yarn build-mvn && yarn copy-jars && yarn && tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -29,12 +28,16 @@
   },
   "homepage": "https://github.com/SonarSource/sonarjs-cli",
   "devDependencies": {
+    "@types/mkdirp": "^0.5.2",
     "@types/node": "^8.0.54",
+    "@types/progress": "^2.0.0",
+    "@types/request": "^2.0.8",
     "jest": "^21.2.1",
     "ts-jest": "^21.2.3",
     "typescript": "^2.6.1"
   },
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "progress": "^2.0.0",
     "request": "^2.83.0",
     "tar-fs": "^1.16.0"

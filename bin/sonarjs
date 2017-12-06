@@ -2,7 +2,7 @@
 const path = require("path");
 const { spawn } = require("child_process");
 const { SonarJSApi } = require("../lib/api");
-const os = require("os");
+const jre = require("../lib/jre");
 const fs = require("fs");
 
 const home = path.join(__dirname, "..", "lib");
@@ -12,32 +12,34 @@ const projectHome = process.cwd();
 
 const api = new SonarJSApi();
 
-const analyzer = spawn(driver(), [
-  "-classpath",
-  jarFile,
-  `-Dsonarlint.home=${home}`,
-  `-Dproject.home=${projectHome}`,
-  "org.sonarsource.mini.scanner.Main",
-  process.argv
-]);
+jre.install(() => {
+  const analyzer = spawn(jre.driver(), [
+    "-classpath",
+    jarFile,
+    `-Dsonarlint.home=${home}`,
+    `-Dproject.home=${projectHome}`,
+    "org.sonarsource.mini.scanner.Main",
+    process.argv
+  ]);
 
-process.stdout.write("- Analyzing " + projectHome);
-const animation = waitingAnimation();
-let result = "";
+  process.stdout.write("- Analyzing " + projectHome);
+  const animation = waitingAnimation();
+  let result = "";
 
-analyzer.stdout.on("data", data => {
-  result += data.toString("utf8");
-});
+  analyzer.stdout.on("data", data => {
+    result += data.toString("utf8");
+  });
 
-analyzer.stderr.on("data", data => {
-  console.error(data.toString("utf8"));
-});
+  analyzer.stderr.on("data", data => {
+    console.error(data.toString("utf8"));
+  });
 
-analyzer.on("close", code => {
-  api.read(result);
-  clearInterval(animation);
-  process.stdout.write("\r"); // Delete animation last sprite
-  api.consoleLines().map(line => console.log(line));
+  analyzer.on("close", code => {
+    api.read(result);
+    clearInterval(animation);
+    process.stdout.write("\r"); // Delete animation last sprite
+    api.consoleLines().map(line => console.log(line));
+  });
 });
 
 // From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
@@ -50,41 +52,4 @@ function waitingAnimation() {
       i &= 3;
     }, 250);
   })();
-}
-
-function jreDir() {
-  return path.join(os.homedir(), ".sonar", "jre");
-}
-
-function driver() {
-  let _platform = os.platform();
-  let _driver;
-  switch (_platform) {
-    case "darwin":
-      _platform = "macosx";
-      _driver = ["Contents", "Home", "bin", "java"];
-      break;
-    case "win32":
-      _platform = "windows";
-      _driver = ["bin", "javaw.exe"];
-      break;
-    case "linux":
-      _driver = ["bin", "java"];
-      break;
-    default:
-      fail("unsupported platform: " + _platform);
-  }
-
-  var jreDirs = getDirectories(jreDir());
-  if (jreDirs.length < 1) fail("no jre found in archive");
-  var d = _driver.slice();
-  d.unshift(jreDirs[0]);
-  d.unshift(jreDir());
-  return path.join.apply(path, d);
-}
-
-function getDirectories(dirPath) {
-  return fs
-    .readdirSync(dirPath)
-    .filter(file => fs.statSync(path.join(dirPath, file)).isDirectory());
 }
