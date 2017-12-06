@@ -38,7 +38,6 @@
   const tar = require("tar-fs");
   const process = require("process");
   const request = require("request");
-  const rmdir = require("rmdir");
   const ProgressBar = require("progress");
   const child_process = require("child_process");
 
@@ -102,40 +101,40 @@
     ".tar.gz";
 
   const install = () => {
-    var urlStr = url();
-    console.log("Downloading from: ", urlStr);
-    if (fs.existsSync(jreDir())) {
-      rmdir(jreDir(), {}, () => fs.mkdirSync(jreDir()));
-    }
-    request
-      .get({
-        url: url(),
-        rejectUnauthorized: false,
-        agent: false,
-        headers: {
-          connection: "keep-alive",
-          Cookie:
-            "gpw_e24=http://www.oracle.com/; oraclelicense=accept-securebackup-cookie"
-        }
-      })
-      .on("response", res => {
-        var len = parseInt(res.headers["content-length"], 10);
-        var bar = new ProgressBar(
-          "  downloading and preparing JRE [:bar] :percent :etas",
-          {
-            complete: "=",
-            incomplete: " ",
-            width: 80,
-            total: len
+    if (!fs.existsSync(jreDir())) {
+      fs.mkdirSync(jreDir());
+      const urlStr = url();
+      console.log("Downloading from: ", urlStr);
+      request
+        .get({
+          url: url(),
+          rejectUnauthorized: false,
+          agent: false,
+          headers: {
+            connection: "keep-alive",
+            Cookie:
+              "gpw_e24=http://www.oracle.com/; oraclelicense=accept-securebackup-cookie"
           }
-        );
-        res.on("data", chunk => bar.tick(chunk.length));
-      })
-      .on("error", err => {
-        console.log(`problem with request: ${err.message}`);
-      })
-      .pipe(zlib.createUnzip())
-      .pipe(tar.extract(jreDir()));
+        })
+        .on("response", res => {
+          const len = parseInt(res.headers["content-length"], 10);
+          const bar = new ProgressBar(
+            "  downloading and preparing JRE [:bar] :percent :etas",
+            {
+              complete: "=",
+              incomplete: " ",
+              width: 80,
+              total: len
+            }
+          );
+          res.on("data", chunk => bar.tick(chunk.length));
+        })
+        .on("error", err => {
+          console.log(`problem with request: ${err.message}`);
+        })
+        .pipe(zlib.createUnzip())
+        .pipe(tar.extract(jreDir()));
+    }
   };
 
   install();
