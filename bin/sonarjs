@@ -2,6 +2,7 @@
 const path = require("path");
 const { spawn } = require("child_process");
 const { SonarJSApi } = require("../lib/api");
+const jre = require("node-jre");
 
 const home = path.join(__dirname, "..", "lib");
 const projectVersion = "0.1-SNAPSHOT"; // TODO make this dynamic somehow!
@@ -10,8 +11,7 @@ const projectHome = process.cwd();
 
 const api = new SonarJSApi();
 
-const analyzer = spawn("java", [
-  "-Djava.awt.headless=true",
+const analyzer = spawn(jre.driver(), [
   "-classpath",
   jarFile,
   `-Dsonarlint.home=${home}`,
@@ -19,6 +19,7 @@ const analyzer = spawn("java", [
   "org.sonarsource.mini.scanner.Main",
   process.argv
 ]);
+
 process.stdout.write("- Analyzing " + projectHome);
 const animation = waitingAnimation();
 let result = "";
