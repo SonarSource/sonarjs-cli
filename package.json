@@ -1,6 +1,6 @@
 {
   "name": "sonarjs",
-  "version": "0.2.0-2",
+  "version": "0.2.0-3",
   "description": "the sonarjs npm module",
   "directories": {
     "lib": "lib"
