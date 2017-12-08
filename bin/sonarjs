@@ -2,6 +2,8 @@
 const path = require("path");
 const { spawn } = require("child_process");
 const { SonarJSApi } = require("../lib/api");
+const jre = require("../lib/jre");
+const fs = require("fs");
 
 const home = path.join(__dirname, "..", "lib");
 const projectVersion = "0.1-SNAPSHOT"; // TODO make this dynamic somehow!
@@ -10,32 +12,34 @@ const projectHome = process.cwd();
 
 const api = new SonarJSApi();
 
-const analyzer = spawn("java", [
-  "-Djava.awt.headless=true",
-  "-classpath",
-  jarFile,
-  `-Dsonarlint.home=${home}`,
-  `-Dproject.home=${projectHome}`,
-  "org.sonarsource.mini.scanner.Main",
-  process.argv
-]);
-process.stdout.write("- Analyzing " + projectHome);
-const animation = waitingAnimation();
-let result = "";
+jre.install(() => {
+  const analyzer = spawn(jre.driver(), [
+    "-classpath",
+    jarFile,
+    `-Dsonarlint.home=${home}`,
+    `-Dproject.home=${projectHome}`,
+    "org.sonarsource.mini.scanner.Main",
+    process.argv
+  ]);
 
-analyzer.stdout.on("data", data => {
-  result += data.toString("utf8");
-});
+  process.stdout.write("- Analyzing " + projectHome);
+  const animation = waitingAnimation();
+  let result = "";
 
-analyzer.stderr.on("data", data => {
-  console.error(data.toString("utf8"));
-});
+  analyzer.stdout.on("data", data => {
+    result += data.toString("utf8");
+  });
 
-analyzer.on("close", code => {
-  api.read(result);
-  clearInterval(animation);
-  process.stdout.write("\r"); // Delete animation last sprite
-  api.consoleLines().map(line => console.log(line));
+  analyzer.stderr.on("data", data => {
+    console.error(data.toString("utf8"));
+  });
+
+  analyzer.on("close", code => {
+    api.read(result);
+    clearInterval(animation);
+    process.stdout.write("\r"); // Delete animation last sprite
+    api.consoleLines().map(line => console.log(line));
+  });
 });
 
 // From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
