@@ -38,19 +38,16 @@ export function url() {
 
 export function install(whenJreReady: any) {
   if (!fs.existsSync(jreDir())) {
-    console.log("jreDir does not exist : " + jreDir());
     mkdirp.sync(jreDir());
     const urlStr = url();
     console.log("Downloading from: ", urlStr);
-    request
+    let unzipped = request
       .get({
         url: urlStr,
         rejectUnauthorized: false,
         agent: false,
         headers: {
-          connection: "keep-alive",
-          Cookie:
-            "gpw_e24=http://www.oracle.com/; oraclelicense=accept-securebackup-cookie"
+          connection: "keep-alive"
         }
       })
       .on("response", (res: any) => {
@@ -69,9 +66,11 @@ export function install(whenJreReady: any) {
       .on("error", (err: any) => {
         console.error(`problem with request: ${err.message}`);
       })
-      .pipe(zlib.createUnzip())
-      .pipe(tar.extract(jreDir()))
-      .on("finish", whenJreReady);
+      .pipe(zlib.createUnzip());
+    if (zip() !== ".zip") {
+      unzipped = unzipped.pipe(tar.extract(jreDir()));
+    }
+    unzipped.on("finish", whenJreReady);
   } else {
     whenJreReady();
   }
@@ -131,5 +130,5 @@ function zip() {
 function getDirectories(dirPath: string) {
   return fs
     .readdirSync(dirPath)
-    .filter(file => fs.statSync(path.join(dirPath, file)).isDirectory());
+    .filter((file:string) => fs.statSync(path.join(dirPath, file)).isDirectory());
 }
