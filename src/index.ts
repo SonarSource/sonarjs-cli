@@ -17,36 +17,4 @@
 * along with this program; if not, write to the Free Software Foundation,
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-export class SonarJSApi {
-  private _issues: Issue[] = [];
-
-  public read(data: string) {
-    this._issues = JSON.parse(data).issues;
-  }
-
-  public issues(): Issue[] {
-    return this._issues;
-  }
-
-  public consoleLines(): string[] {
-    // prettier-ignore
-    return this._issues.map(
-      issue => `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${issue.pos.line}, ${issue.pos.column + 1}]: ${issue.message}`
-    );
-  }
-}
-
-export interface Issue {
-  title: String;
-  message: String;
-  file: String;
-  key: String;
-  severity: "BLOCKER" | "CRITICAL" | "MAJOR" | "MINOR" | "INFO";
-  pos: Position;
-  end_pos: Position;
-}
-
-export interface Position {
-  line: number;
-  column: number;
-}
+export { analyze, Logger, Issue, Position } from "./analyzer";

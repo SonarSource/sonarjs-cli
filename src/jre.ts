@@ -28,6 +28,7 @@ import * as request from "request";
 import * as ProgressBar from "progress";
 import * as child_process from "child_process";
 import * as mkdirp from "mkdirp";
+import { Logger } from "./analyzer";
 
 const version = "zulu8.25.0.1-jdk8.0.152-";
 
@@ -37,11 +38,11 @@ export function url() {
   );
 }
 
-export function install(whenJreReady: any) {
+export function install(whenJreReady: () => void, log: Logger) {
   if (!fs.existsSync(jreDir())) {
     mkdirp.sync(jreDir());
     const urlStr = url();
-    console.log("Downloading from: ", urlStr);
+    log("Downloading from: " + urlStr, "INFO");
     let stream = request
       .get(buildRequest(urlStr))
       .on("response", progressBar)
@@ -55,7 +56,7 @@ export function install(whenJreReady: any) {
     } else {
       stream
         .pipe(unzip.Extract({ path: jreDir() }))
-        .on("error", reportAndCleanup)
+        .on("error", (error: any) => reportAndCleanup(error, log))
         .on("finish", whenJreReady);
     }
   } else {
@@ -63,14 +64,14 @@ export function install(whenJreReady: any) {
   }
 }
 
-function reportAndCleanup(error: any) {
-  console.error(error);
+function reportAndCleanup(error: any, log: Logger) {
+  log(error, "ERROR");
   fs.rmdir(
     jreDir(),
     error =>
       error
-        ? console.error("Please manually delete " + jreDir())
-        : console.log(jreDir() + " deleted")
+        ? log("Please manually delete " + jreDir(), "ERROR")
+        : log(jreDir() + " deleted", "INFO")
   );
 }
 

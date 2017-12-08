@@ -4,7 +4,8 @@
     "module": "commonjs",
     "lib": ["es2017"],
     "outDir": "lib",
-    "strict": true
+    "strict": true,
+    "declaration": true
   },
   "include": ["src/**/*"]
 }
