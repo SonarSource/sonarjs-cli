@@ -21,6 +21,7 @@ import * as os from "os";
 import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
+import * as unzip from "unzip-stream";
 import * as tar from "tar-fs";
 import * as process from "process";
 import * as request from "request";
@@ -41,7 +42,7 @@ export function install(whenJreReady: any) {
     mkdirp.sync(jreDir());
     const urlStr = url();
     console.log("Downloading from: ", urlStr);
-    let unzipped = request
+    let zipped = request
       .get({
         url: urlStr,
         rejectUnauthorized: false,
@@ -65,12 +66,15 @@ export function install(whenJreReady: any) {
       })
       .on("error", (err: any) => {
         console.error(`problem with request: ${err.message}`);
-      })
-      .pipe(zlib.createUnzip());
+      });
     if (zip() !== ".zip") {
-      unzipped = unzipped.pipe(tar.extract(jreDir()));
+      zipped
+        .pipe(zlib.createUnzip())
+        .pipe(tar.extract(jreDir()))
+        .on("finish", whenJreReady);
+    } else {
+      zipped.pipe(unzip.Extract({ path: jreDir() })).on("finish", whenJreReady);
     }
-    unzipped.on("finish", whenJreReady);
   } else {
     whenJreReady();
   }
@@ -130,5 +134,7 @@ function zip() {
 function getDirectories(dirPath: string) {
   return fs
     .readdirSync(dirPath)
-    .filter((file:string) => fs.statSync(path.join(dirPath, file)).isDirectory());
+    .filter((file: string) =>
+      fs.statSync(path.join(dirPath, file)).isDirectory()
+    );
 }

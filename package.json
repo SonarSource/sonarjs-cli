@@ -40,6 +40,7 @@
     "mkdirp": "^0.5.1",
     "progress": "^2.0.0",
     "request": "^2.83.0",
-    "tar-fs": "^1.16.0"
+    "tar-fs": "^1.16.0",
+    "unzip-stream": "^0.2.1"
   }
 }
