@@ -43,27 +43,8 @@ export function install(whenJreReady: any) {
     const urlStr = url();
     console.log("Downloading from: ", urlStr);
     let stream = request
-      .get({
-        url: urlStr,
-        rejectUnauthorized: false,
-        agent: false,
-        headers: {
-          connection: "keep-alive"
-        }
-      })
-      .on("response", (res: any) => {
-        const len = parseInt(res.headers["content-length"], 10);
-        const bar = new ProgressBar(
-          "  downloading and preparing JRE [:bar] :percent :etas",
-          {
-            complete: "=",
-            incomplete: " ",
-            width: 80,
-            total: len
-          }
-        );
-        res.on("data", (chunk: any) => bar.tick(chunk.length));
-      })
+      .get(buildRequest(urlStr))
+      .on("response", progressBar)
       .on("error", reportAndCleanup);
     if (zip() !== ".zip") {
       stream
@@ -93,7 +74,31 @@ function reportAndCleanup(error: any) {
   );
 }
 
-export function driver() {
+function buildRequest(url: string) {
+  return {
+    url,
+    rejectUnauthorized: false,
+    headers: {
+      connection: "keep-alive"
+    }
+  };
+}
+
+function progressBar(res: any) {
+  const len = parseInt(res.headers["content-length"], 10);
+  const bar = new ProgressBar(
+    "  downloading and preparing JRE [:bar] :percent :etas",
+    {
+      complete: "=",
+      incomplete: " ",
+      width: 80,
+      total: len
+    }
+  );
+  res.on("data", (chunk: any) => bar.tick(chunk.length));
+}
+
+export function driver(): string {
   let platform = os.platform();
   let driver;
   switch (platform) {
@@ -110,9 +115,8 @@ export function driver() {
       throw new Error("unsupported platform: " + platform);
   }
 
-  console.log(jreDir());
   var jreDirs = getDirectories(jreDir());
-  if (jreDirs.length < 1) console.error("no jre found in archive");
+  if (jreDirs.length < 1) throw new Error("no jre found in " + jreDir());
   var d = driver.slice();
   d.unshift(jreDirs[0]);
   d.unshift(jreDir());
@@ -121,7 +125,7 @@ export function driver() {
 
 export const jreDir = () => path.join(os.homedir(), ".sonarjs", "jre");
 
-export function platform() {
+export function platform(): string {
   const platform = os.platform();
   let javaPlatform: string | undefined;
   switch (platform) {
@@ -136,7 +140,7 @@ export function platform() {
   }
 }
 
-function zip() {
+function zip(): string {
   if (os.platform() === "win32") {
     return ".zip";
   } else {
@@ -144,7 +148,7 @@ function zip() {
   }
 }
 
-function getDirectories(dirPath: string) {
+function getDirectories(dirPath: string): string[] {
   return fs
     .readdirSync(dirPath)
     .filter((file: string) =>
