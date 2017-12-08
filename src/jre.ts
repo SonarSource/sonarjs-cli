@@ -42,7 +42,7 @@ export function install(whenJreReady: any) {
     mkdirp.sync(jreDir());
     const urlStr = url();
     console.log("Downloading from: ", urlStr);
-    let zipped = request
+    let stream = request
       .get({
         url: urlStr,
         rejectUnauthorized: false,
@@ -64,20 +64,33 @@ export function install(whenJreReady: any) {
         );
         res.on("data", (chunk: any) => bar.tick(chunk.length));
       })
-      .on("error", (err: any) => {
-        console.error(`problem with request: ${err.message}`);
-      });
+      .on("error", reportAndCleanup);
     if (zip() !== ".zip") {
-      zipped
+      stream
         .pipe(zlib.createUnzip())
+        .on("error", reportAndCleanup)
         .pipe(tar.extract(jreDir()))
         .on("finish", whenJreReady);
     } else {
-      zipped.pipe(unzip.Extract({ path: jreDir() })).on("finish", whenJreReady);
+      stream
+        .pipe(unzip.Extract({ path: jreDir() }))
+        .on("error", reportAndCleanup)
+        .on("finish", whenJreReady);
     }
   } else {
     whenJreReady();
   }
+}
+
+function reportAndCleanup(error: any) {
+  console.error(error);
+  fs.rmdir(
+    jreDir(),
+    error =>
+      error
+        ? console.error("Please manually delete " + jreDir())
+        : console.log(jreDir() + " deleted")
+  );
 }
 
 export function driver() {
