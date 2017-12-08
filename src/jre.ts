@@ -82,7 +82,7 @@ export function driver() {
   let driver;
   switch (platform) {
     case "darwin":
-      driver = ["Contents", "Home", "bin", "java"];
+      driver = ["bin", "java"];
       break;
     case "win32":
       driver = ["bin", "javaw.exe"];
