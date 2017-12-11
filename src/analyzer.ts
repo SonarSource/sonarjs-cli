@@ -32,10 +32,10 @@ export async function analyze(
   onStart: () => void = () => {},
   onEnd: () => void = () => {}
 ) {
-  await jre.install(log);
+  const driver = await jre.install(log);
   onStart();
 
-  const miniScanner = spawn(jre.driver(), [
+  const miniScanner = spawn(driver, [
     "-classpath",
     jarFile,
     `-Dsonarlint.home=${home}`,

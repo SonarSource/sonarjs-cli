@@ -39,11 +39,15 @@ export function url() {
 }
 
 export async function install(log: Logger) {
+  const jreIsAvailable = await isJreAvailable(log);
+  if (jreIsAvailable) {
+    return Promise.resolve<string>("java");
+  }
   if (!fs.existsSync(jreDir())) {
     mkdirp.sync(jreDir());
     const urlStr = url();
     log("Downloading from: " + urlStr, "INFO");
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       let stream = request
         .get(buildRequest(urlStr))
         .on("response", progressBar)
@@ -53,18 +57,36 @@ export async function install(log: Logger) {
           .pipe(zlib.createUnzip())
           .on("error", reportAndCleanup(log))
           .pipe(tar.extract(jreDir()))
-          .on("finish", resolve);
+          .on("finish", () => resolve(driver()));
       } else {
         stream
           .pipe(unzip.Extract({ path: jreDir() }))
           .on("error", reportAndCleanup(log))
-          .on("finish", resolve);
+          .on("finish", () => resolve(driver()));
       }
     });
   } else {
-    
-    return;
+    return Promise.resolve<string>(driver());
   }
+}
+
+async function isJreAvailable(log: Logger) {
+  const process = child_process.exec("java -version");
+  return new Promise<boolean>((resolve, reject) => {
+    let result = "";
+    process.stderr.on("data", data => {
+      result += data.toString();
+    });
+
+    process.on("close", () => {
+      resolve(!!result.match(/1\.8/));
+    });
+
+    process.on("error", err => {
+      log(err.message, "ERROR");
+      resolve(false);
+    });
+  });
 }
 
 function reportAndCleanup(log: Logger) {

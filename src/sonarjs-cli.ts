@@ -22,8 +22,12 @@ import { analyze, LogLevel, Issue } from "./analyzer";
 const projectHome = process.cwd();
 const analyzingMessage = " Analyzing " + projectHome;
 
+let animation: any;
+
 const logger = (message: string, logLevel: LogLevel) => {
-  onEnd();
+  if (animation) {
+    onEnd();
+  }
   switch (logLevel) {
     case "INFO":
       console.log(message);
@@ -35,10 +39,10 @@ const logger = (message: string, logLevel: LogLevel) => {
       console.error(message);
       break;
   }
-  onStart();
+  if (animation) {
+    onStart();
+  }
 };
-
-let animation: any;
 
 const onStart = () => {
   process.stdout.write("-" + analyzingMessage);
@@ -53,10 +57,11 @@ const onEnd = () => {
 
 run();
 
+
 async function run() {
   const issues = await analyze(projectHome, logger, onStart, onEnd);
 
-  process.stdout.write("Finished analyzing " + projectHome+ "\n");
+  process.stdout.write("Finished analyzing " + projectHome + "\n");
 
   if (issues.length > 0) {
     issues.map(issue => console.log(issueView(issue)));
@@ -66,7 +71,6 @@ async function run() {
     process.exit(0);
   }
 }
-
 
 // From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
 function waitingAnimation() {
