@@ -20,8 +20,10 @@
 import { analyze, LogLevel, Issue } from "./analyzer";
 
 const projectHome = process.cwd();
+const analyzingMessage = " Analyzing " + projectHome;
 
 const logger = (message: string, logLevel: LogLevel) => {
+  onEnd();
   switch (logLevel) {
     case "INFO":
       console.log(message);
@@ -33,34 +35,38 @@ const logger = (message: string, logLevel: LogLevel) => {
       console.error(message);
       break;
   }
+  onStart();
 };
 
 let animation: any;
 
 const onStart = () => {
-  process.stdout.write("- Analyzing " + projectHome);
+  process.stdout.write("-" + analyzingMessage);
   animation = waitingAnimation();
 };
 
 const onEnd = () => {
   clearInterval(animation);
-  process.stdout.write("\r"); // Delete animation last sprite
+  // cleans last line
+  process.stdout.write("\r\x1b[K\r");
 };
 
 run();
 
 async function run() {
   const issues = await analyze(projectHome, logger, onStart, onEnd);
-  processIssues(issues);
-}
 
-function processIssues(issues: Issue[]) {
+  process.stdout.write("Finished analyzing " + projectHome+ "\n");
+
   if (issues.length > 0) {
     issues.map(issue => console.log(issueView(issue)));
+    process.exit(1);
   } else {
     console.log("No issues found");
+    process.exit(0);
   }
 }
+
 
 // From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
 function waitingAnimation() {
@@ -68,7 +74,7 @@ function waitingAnimation() {
     var sprites = ["\\", "|", "/", "-"];
     var i = 0;
     return setInterval(function() {
-      process.stdout.write("\r" + sprites[i++]);
+      process.stdout.write("\r" + sprites[i++] + analyzingMessage);
       i &= 3;
     }, 250);
   })();
