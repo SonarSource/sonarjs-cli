@@ -47,7 +47,12 @@ const onEnd = () => {
   process.stdout.write("\r"); // Delete animation last sprite
 };
 
-const issues = analyze(projectHome, processIssues, logger, onStart, onEnd);
+run();
+
+async function run() {
+  const issues = await analyze(projectHome, logger, onStart, onEnd);
+  processIssues(issues);
+}
 
 function processIssues(issues: Issue[]) {
   if (issues.length > 0) {
@@ -73,5 +78,5 @@ function waitingAnimation() {
 export function issueView(issue: Issue): string {
   return `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${
     issue.pos.line
-  }, ${issue.pos.column + 1}]: ${issue.message}`
+  }, ${issue.pos.column + 1}]: ${issue.message}`;
 }

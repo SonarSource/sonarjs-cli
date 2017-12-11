@@ -38,41 +38,46 @@ export function url() {
   );
 }
 
-export function install(whenJreReady: () => void, log: Logger) {
+export async function install(log: Logger) {
   if (!fs.existsSync(jreDir())) {
     mkdirp.sync(jreDir());
     const urlStr = url();
     log("Downloading from: " + urlStr, "INFO");
-    let stream = request
-      .get(buildRequest(urlStr))
-      .on("response", progressBar)
-      .on("error", reportAndCleanup);
-    if (zip() !== ".zip") {
-      stream
-        .pipe(zlib.createUnzip())
-        .on("error", reportAndCleanup)
-        .pipe(tar.extract(jreDir()))
-        .on("finish", whenJreReady);
-    } else {
-      stream
-        .pipe(unzip.Extract({ path: jreDir() }))
-        .on("error", (error: any) => reportAndCleanup(error, log))
-        .on("finish", whenJreReady);
-    }
+    return new Promise((resolve, reject) => {
+      let stream = request
+        .get(buildRequest(urlStr))
+        .on("response", progressBar)
+        .on("error", reportAndCleanup(log));
+      if (zip() !== ".zip") {
+        stream
+          .pipe(zlib.createUnzip())
+          .on("error", reportAndCleanup(log))
+          .pipe(tar.extract(jreDir()))
+          .on("finish", resolve);
+      } else {
+        stream
+          .pipe(unzip.Extract({ path: jreDir() }))
+          .on("error", reportAndCleanup(log))
+          .on("finish", resolve);
+      }
+    });
   } else {
-    whenJreReady();
+    
+    return;
   }
 }
 
-function reportAndCleanup(error: any, log: Logger) {
-  log(error, "ERROR");
-  fs.rmdir(
-    jreDir(),
-    error =>
-      error
-        ? log("Please manually delete " + jreDir(), "ERROR")
-        : log(jreDir() + " deleted", "INFO")
-  );
+function reportAndCleanup(log: Logger) {
+  return (error: any) => {
+    log(error, "ERROR");
+    fs.rmdir(
+      jreDir(),
+      error =>
+        error
+          ? log("Please manually delete " + jreDir(), "ERROR")
+          : log(jreDir() + " deleted", "INFO")
+    );
+  };
 }
 
 function buildRequest(url: string) {

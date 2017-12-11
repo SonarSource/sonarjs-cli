@@ -26,27 +26,27 @@ const home = path.join(__dirname, "..", "lib");
 const projectVersion = "0.1-SNAPSHOT"; // TODO make this dynamic somehow!
 const jarFile = path.join(home, `mini-scanner-${projectVersion}.jar`);
 
-export function analyze(
+export async function analyze(
   projectHome: String,
-  processIssues: (issues: Issue[]) => void,
   log: Logger = (message: string, logLevel: LogLevel) => {},
   onStart: () => void = () => {},
   onEnd: () => void = () => {}
-): void {
-  jre.install(() => {
-    onStart();
+) {
+  await jre.install(log);
+  onStart();
 
-    const miniScanner = spawn(jre.driver(), [
-      "-classpath",
-      jarFile,
-      `-Dsonarlint.home=${home}`,
-      `-Dproject.home=${projectHome}`,
-      "org.sonarsource.mini.scanner.Main",
-      ...process.argv
-    ]);
+  const miniScanner = spawn(jre.driver(), [
+    "-classpath",
+    jarFile,
+    `-Dsonarlint.home=${home}`,
+    `-Dproject.home=${projectHome}`,
+    "org.sonarsource.mini.scanner.Main",
+    ...process.argv
+  ]);
 
-    let result = "";
+  let result = "";
 
+  return new Promise<Issue[]>((resolve, reject) => {
     miniScanner.stdout.on("data", data => {
       result += data.toString();
     });
@@ -57,10 +57,9 @@ export function analyze(
 
     miniScanner.on("close", code => {
       onEnd();
-      const issues = JSON.parse(result).issues;
-      processIssues(issues);
+      resolve(JSON.parse(result).issues);
     });
-  }, log);
+  });
 }
 
 // exported for test purposes only
