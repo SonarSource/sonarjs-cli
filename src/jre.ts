@@ -28,6 +28,7 @@ import * as request from "request";
 import * as ProgressBar from "progress";
 import * as child_process from "child_process";
 import * as mkdirp from "mkdirp";
+import { Logger } from "./analyzer";
 
 const version = "zulu8.25.0.1-jdk8.0.152-";
 
@@ -37,41 +38,68 @@ export function url() {
   );
 }
 
-export function install(whenJreReady: any) {
+export async function install(log: Logger): Promise<string> {
+  if (await isJreAvailable(log)) {
+    return Promise.resolve("java");
+  }
+
   if (!fs.existsSync(jreDir())) {
     mkdirp.sync(jreDir());
     const urlStr = url();
-    console.log("Downloading from: ", urlStr);
-    let stream = request
-      .get(buildRequest(urlStr))
-      .on("response", progressBar)
-      .on("error", reportAndCleanup);
-    if (zip() !== ".zip") {
-      stream
-        .pipe(zlib.createUnzip())
-        .on("error", reportAndCleanup)
-        .pipe(tar.extract(jreDir()))
-        .on("finish", whenJreReady);
-    } else {
-      stream
-        .pipe(unzip.Extract({ path: jreDir() }))
-        .on("error", reportAndCleanup)
-        .on("finish", whenJreReady);
-    }
+    log("Downloading from: " + urlStr, "INFO");
+    return new Promise<string>((resolve, reject) => {
+      let stream = request
+        .get(buildRequest(urlStr))
+        .on("response", progressBar)
+        .on("error", reportAndCleanup(log));
+      if (zip() !== ".zip") {
+        stream
+          .pipe(zlib.createUnzip())
+          .on("error", reportAndCleanup(log))
+          .pipe(tar.extract(jreDir()))
+          .on("finish", () => resolve(driver()));
+      } else {
+        stream
+          .pipe(unzip.Extract({ path: jreDir() }))
+          .on("error", reportAndCleanup(log))
+          .on("finish", () => resolve(driver()));
+      }
+    });
   } else {
-    whenJreReady();
+    return Promise.resolve<string>(driver());
   }
 }
 
-function reportAndCleanup(error: any) {
-  console.error(error);
-  fs.rmdir(
-    jreDir(),
-    error =>
-      error
-        ? console.error("Please manually delete " + jreDir())
-        : console.log(jreDir() + " deleted")
-  );
+async function isJreAvailable(log: Logger): Promise<boolean> {
+  const process = child_process.exec("java -version");
+  return new Promise<boolean>((resolve, reject) => {
+    let result = "";
+    process.stderr.on("data", data => {
+      result += data.toString();
+    });
+
+    process.on("close", () => {
+      resolve(!!result.match(/1\.8/));
+    });
+
+    process.on("error", err => {
+      log(err.message, "ERROR");
+      resolve(false);
+    });
+  });
+}
+
+function reportAndCleanup(log: Logger) {
+  return (error: any) => {
+    log(error, "ERROR");
+    fs.rmdir(
+      jreDir(),
+      error =>
+        error
+          ? log("Please manually delete " + jreDir(), "ERROR")
+          : log(jreDir() + " deleted", "INFO")
+    );
+  };
 }
 
 function buildRequest(url: string) {
@@ -98,7 +126,7 @@ function progressBar(res: any) {
   res.on("data", (chunk: any) => bar.tick(chunk.length));
 }
 
-export function driver(): string {
+function driver(): string {
   let platform = os.platform();
   let driver;
   switch (platform) {

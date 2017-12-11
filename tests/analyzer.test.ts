@@ -17,16 +17,16 @@
 * along with this program; if not, write to the Free Software Foundation,
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-import { SonarJSApi } from "../src/api";
+import { parseIssues } from "../src/analyzer";
+import { issueView } from "../src/sonarjs-cli";
 
 const ANALYZER_JSON = `{"issues":[{"file":"/somepath/somejavascript.js","key":"javascript:S1000","severity":"MAJOR","title":"some description","message":"some message","pos":{"line":5,"column":2},"end_pos":{"line":5,"column":10}}]}`;
 
 describe("api", () => {
   it("collects issues from json outputs", () => {
-    const api = new SonarJSApi();
-    api.read(ANALYZER_JSON);
-    expect(api.issues().length).toEqual(1);
-    const issue = api.issues()[0];
+    const issues = parseIssues(ANALYZER_JSON);
+    expect(issues.length).toEqual(1);
+    const issue = issues[0];
     expect(issue.title).toEqual("some description");
     expect(issue.message).toEqual("some message");
     expect(issue.file).toEqual("/somepath/somejavascript.js");
@@ -35,10 +35,10 @@ describe("api", () => {
     expect(issue.pos.line).toEqual(5);
     expect(issue.pos.column).toEqual(2);
   });
+  
   it("prints issues as console lines", () => {
-    const api = new SonarJSApi();
-    api.read(ANALYZER_JSON);
-    expect(api.consoleLines()[0]).toEqual(
+    const issue = parseIssues(ANALYZER_JSON)[0];
+    expect(issueView(issue)).toEqual(
       "MAJOR - S1000: /somepath/somejavascript.js [5, 3]: some message"
     );
   });
