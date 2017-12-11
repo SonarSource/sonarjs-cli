@@ -63,6 +63,11 @@ export function analyze(
   }, log);
 }
 
+// exported for test purposes only
+export function parseIssues(json: string): Issue[] {
+  return JSON.parse(json).issues;
+}
+
 export interface Issue {
   title: String;
   message: String;

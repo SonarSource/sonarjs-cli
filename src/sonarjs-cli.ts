@@ -51,13 +51,7 @@ const issues = analyze(projectHome, processIssues, logger, onStart, onEnd);
 
 function processIssues(issues: Issue[]) {
   if (issues.length > 0) {
-    issues.map(issue =>
-      console.log(
-        `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${
-          issue.pos.line
-        }, ${issue.pos.column + 1}]: ${issue.message}`
-      )
-    );
+    issues.map(issue => console.log(issueView(issue)));
   } else {
     console.log("No issues found");
   }
@@ -73,4 +67,11 @@ function waitingAnimation() {
       i &= 3;
     }, 250);
   })();
+}
+
+// exported for test purposes only
+export function issueView(issue: Issue): string {
+  return `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${
+    issue.pos.line
+  }, ${issue.pos.column + 1}]: ${issue.message}`
 }
