@@ -38,11 +38,11 @@ export function url() {
   );
 }
 
-export async function install(log: Logger) {
-  const jreIsAvailable = await isJreAvailable(log);
-  if (jreIsAvailable) {
-    return Promise.resolve<string>("java");
+export async function install(log: Logger): Promise<string> {
+  if (await isJreAvailable(log)) {
+    return Promise.resolve("java");
   }
+
   if (!fs.existsSync(jreDir())) {
     mkdirp.sync(jreDir());
     const urlStr = url();
@@ -70,7 +70,7 @@ export async function install(log: Logger) {
   }
 }
 
-async function isJreAvailable(log: Logger) {
+async function isJreAvailable(log: Logger): Promise<boolean> {
   const process = child_process.exec("java -version");
   return new Promise<boolean>((resolve, reject) => {
     let result = "";
@@ -126,7 +126,7 @@ function progressBar(res: any) {
   res.on("data", (chunk: any) => bar.tick(chunk.length));
 }
 
-export function driver(): string {
+function driver(): string {
   let platform = os.platform();
   let driver;
   switch (platform) {
