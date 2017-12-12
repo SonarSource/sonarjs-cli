@@ -17,6 +17,11 @@ It provides ~80 rules (including ~40 bug detection), which represent the ["Sonar
 > cd <directory of project to analyze>
 > sonarjs
 ```
+or
+```
+> sonarjs -h
+```
+for more information
 * As the result you will get the list of issues found in the project. E.g.
 ```
 MAJOR - S3923: /Users/path/to/foo/file.js [3, 6]: Remove this conditional structure or edit its code blocks so that they're not all the same.
@@ -49,7 +54,7 @@ async function runSonarJS() {
 }
 ```
 
-* Provide optional callbacks for `analyze` function to collect logs and to add some behavior before and after analysis
+* Provide options to inject callbacks for `analyze` function to collect logs and to add some behavior before and after analysis
 ```typescript
 function log(message: string) {
   console.log(message);
@@ -64,7 +69,15 @@ function onEnd() {
 }
 
 async function runSonarJS() {
-  const issues = await analyze("/path/to/project", log, onStart, onEnd);
+  const issues = await analyze("/path/to/project", { log, onStart, onEnd });
+  // ...
+}
+```
+
+* Provide options to exclude folders from analysis
+```typescript
+async function runSonarJS() {
+  const issues = await analyze("/path/to/project", { exclusions: "**/tests/**" });
   // ...
 }
 ```

@@ -25,8 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import org.sonarsource.mini.scanner.analysis.SonarLint;
 import org.sonarsource.mini.scanner.analysis.SonarLintFactory;
+import org.sonarsource.mini.scanner.analysis.StandaloneSonarLint;
 import org.sonarsource.mini.scanner.util.Logger;
 import org.sonarsource.mini.scanner.util.System2;
 import org.sonarsource.mini.scanner.util.Util;
@@ -53,7 +53,7 @@ public class Main {
 
   int run() {
     try {
-      SonarLint sonarLint = sonarLintFactory.createSonarLint();
+      StandaloneSonarLint sonarLint = sonarLintFactory.createSonarLint();
 
       Map<String, String> props = Util.toMap(opts.properties());
 
@@ -75,18 +75,19 @@ public class Main {
     return Paths.get(projectHome);
   }
 
-  private void runOnce(SonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
+  private void runOnce(StandaloneSonarLint sonarLint, Map<String, String> props, Path projectHome) throws IOException {
     sonarLint.runAnalysis(props, fileFinder, projectHome);
     sonarLint.stop();
   }
 
   public static void main(String[] args) {
-    execute(System2.INSTANCE);
+    execute(args, System2.INSTANCE);
   }
 
   @VisibleForTesting
-  static void execute(System2 system) {
-    Options options = new Options();
+  static void execute(String[] args, System2 system) {
+    Options options = Options.from(args);
+
     InputFileFinder fileFinder = new InputFileFinder(options.src(), options.tests(), options.exclusions(), StandardCharsets.UTF_8);
     SonarLintFactory sonarLintFactory = new SonarLintFactory();
 

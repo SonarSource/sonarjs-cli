@@ -32,16 +32,15 @@ const argv = yargs
   })
   .help('h')
   .argv
-;
+  ;
 
-const exclusions: string | undefined = argv.exclusions || undefined;
-console.log(exclusions);
+const exclusions: string = argv.exclusions || "";
 const projectHome = process.cwd();
 const analyzingMessage = " Analyzing " + projectHome;
 
 let animation: any;
 
-const logger = (message: string, logLevel: LogLevel) => {
+const log = (message: string, logLevel: LogLevel) => {
   if (animation) {
     onEnd();
   }
@@ -76,7 +75,7 @@ run();
 
 
 async function run() {
-  const issues = await analyze(projectHome, logger, onStart, onEnd);
+  const issues = await analyze(projectHome, { log, onStart, onEnd, exclusions });
 
   process.stdout.write("Finished analyzing " + projectHome + "\n");
 
@@ -91,10 +90,10 @@ async function run() {
 
 // From https://stackoverflow.com/questions/34848505/how-to-make-a-loading-animation-in-console-application-written-in-javascript-or
 function waitingAnimation() {
-  return (function() {
+  return (function () {
     var sprites = ["\\", "|", "/", "-"];
     var i = 0;
-    return setInterval(function() {
+    return setInterval(function () {
       process.stdout.write("\r" + sprites[i++] + analyzingMessage);
       i &= 3;
     }, 250);
@@ -105,5 +104,5 @@ function waitingAnimation() {
 export function issueView(issue: Issue): string {
   return `${issue.severity} - ${issue.key.split(":")[1]}: ${issue.file} [${
     issue.pos.line
-  }, ${issue.pos.column + 1}]: ${issue.message}`;
+    }, ${issue.pos.column + 1}]: ${issue.message}`;
 }

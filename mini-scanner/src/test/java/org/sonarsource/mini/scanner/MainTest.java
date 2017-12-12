@@ -30,8 +30,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.sonarsource.mini.scanner.analysis.SonarLint;
 import org.sonarsource.mini.scanner.analysis.SonarLintFactory;
+import org.sonarsource.mini.scanner.analysis.StandaloneSonarLint;
 import org.sonarsource.mini.scanner.util.Logger;
 import org.sonarsource.mini.scanner.util.System2;
 
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 public class MainTest {
   private Main main;
   private SonarLintFactory sonarLintFactory;
-  private SonarLint sonarLint;
+  private StandaloneSonarLint sonarLint;
   private InputFileFinder fileFinder;
   private Options opts;
   private ByteArrayOutputStream err;
@@ -61,7 +61,7 @@ public class MainTest {
     opts = mock(Options.class);
     when(opts.properties()).thenReturn(new Properties());
     setUpLogger();
-    sonarLint = mock(SonarLint.class);
+    sonarLint = mock(StandaloneSonarLint.class);
     sonarLintFactory = mock(SonarLintFactory.class);
     when(sonarLintFactory.createSonarLint()).thenReturn(sonarLint);
     fileFinder = new InputFileFinder(null, null, null, Charset.defaultCharset());
@@ -90,7 +90,7 @@ public class MainTest {
     System2 sys = mock(System2.class);
     Path emptyDir = temp.newFolder().toPath();
     when(sys.getProperty(SonarProperties.PROJECT_HOME)).thenReturn(emptyDir.toString());
-    Main.execute(sys);
+    Main.execute(new String[]{}, sys);
     verify(sys).exit(Main.ERROR);
     assertThat(getLogs(err)).contains("Error loading plugins");
   }

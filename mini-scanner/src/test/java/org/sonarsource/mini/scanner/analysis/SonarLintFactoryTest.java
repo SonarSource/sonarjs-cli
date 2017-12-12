@@ -52,7 +52,7 @@ public class SonarLintFactoryTest {
 
   @Test
   public void test_createSonarLint_with_default_global_config() {
-    SonarLint sonarLint = sonarLintFactory.createSonarLint();
+    StandaloneSonarLint sonarLint = sonarLintFactory.createSonarLint();
 
     assertThat(sonarLint).isNotNull();
     assertThat(sonarLint).isInstanceOf(StandaloneSonarLint.class);

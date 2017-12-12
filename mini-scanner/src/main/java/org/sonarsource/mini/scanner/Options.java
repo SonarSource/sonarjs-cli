@@ -19,10 +19,13 @@
  */
 package org.sonarsource.mini.scanner;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 
 public class Options {
 
+  private static final String EXCLUSIONS_KEY = "--exclusions=";
   private Properties props = new Properties();
   private String src = null;
   private String tests = "";
@@ -44,4 +47,18 @@ public class Options {
     return props;
   }
 
+  public static Options from(String... args) {
+    Options options = new Options();
+    Optional<String> maybeExclusions = parseExclusions(args);
+    maybeExclusions.ifPresent(options::addExclusions);
+    return options;
+  }
+
+  private void addExclusions(String exclusions) {
+    this.exclusions += "," + exclusions;
+  }
+
+  private static Optional<String> parseExclusions(String[] args) {
+    return Arrays.stream(args).filter(arg -> arg.startsWith(EXCLUSIONS_KEY)).findFirst().map(arg -> arg.replace(EXCLUSIONS_KEY,""));
+  }
 }
