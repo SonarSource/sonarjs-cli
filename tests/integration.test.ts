@@ -23,7 +23,7 @@ import * as path from "path";
 describe("sonarjs", () => {
   it("scans integration_test_project", done => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-    const sonarjs = spawn("../../bin/sonarjs", [], {
+    const sonarjs = spawn("../../bin/sonarjs", ["-e", "third-party/**"], {
       cwd: path.join(__dirname, "integration_test_project")
     });
     let result = "";
@@ -35,7 +35,7 @@ describe("sonarjs", () => {
         /BLOCKER - OctalNumber: .*\/somejavascript\.js \[2, 13\]: Replace the value of the octal number \(052\) by its decimal equivalent \(42\)/
       );
       expect(result).not.toMatch(/somedependency.js/);
-
+      expect(result).not.toMatch(/someotherdependency.js/);
       expect(errors).toMatch(/Unable to parse file.*compilationerror.js/);
 
       done();
