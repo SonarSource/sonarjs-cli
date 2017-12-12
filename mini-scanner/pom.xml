@@ -30,8 +30,8 @@
   <properties>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <gitRepositoryName>sonarjs-cli</gitRepositoryName>
-    <sonarlint.version>2.9.0.276</sonarlint.version>
-    <sonar.javascript.version>3.3.0.5702</sonar.javascript.version>
+    <sonarlint.version>3.0.0.1140</sonarlint.version>
+    <sonar.javascript.version>4.0.0.5840</sonar.javascript.version>
     <!-- Release: enable publication to Bintray -->
   </properties>
 
@@ -158,8 +158,8 @@
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <minsize>21000000</minsize>
-                  <maxsize>22000000</maxsize>
+                  <minsize>8500000</minsize>
+                  <maxsize>9000000</maxsize>
                   <files>
                     <file>${project.build.directory}/mini-scanner-${project.version}.jar</file>
                   </files>
