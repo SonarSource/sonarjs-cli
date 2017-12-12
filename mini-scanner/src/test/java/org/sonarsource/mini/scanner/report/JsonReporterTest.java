@@ -45,6 +45,7 @@ public class JsonReporterTest {
     "some rule description",
     "<html></html>",
     "BLOCKER",
+    null,
     "JS",
     Collections.emptySet(),
     "a very long description");

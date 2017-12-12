@@ -47,7 +47,7 @@ public class StandaloneSonarLint extends SonarLint {
     IssueCollector collector = new IssueCollector();
     StandaloneAnalysisConfiguration config = new StandaloneAnalysisConfiguration(baseDirPath, baseDirPath.resolve(".sonarlint"),
       inputFiles, properties);
-    AnalysisResults result = engine.analyze(config, collector);
+    AnalysisResults result = engine.analyze(config, collector, null, null);
     Collection<Trackable> trackables = collector.get().stream().map(IssueTrackable::new).collect(Collectors.toList());
     generateReports(trackables, result, baseDirPath.getFileName().toString(), start);
   }
