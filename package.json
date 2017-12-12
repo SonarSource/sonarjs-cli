@@ -5,7 +5,7 @@
   "directories": {
     "lib": "lib"
   },
-  "main" : "./lib/index.js",
+  "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "bin": "./bin/sonarjs",
   "scripts": {
@@ -39,10 +39,12 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
+    "@types/yargs": "^10.0.0",
     "mkdirp": "^0.5.1",
     "progress": "^2.0.0",
     "request": "^2.83.0",
     "tar-fs": "^1.16.0",
-    "unzip-stream": "^0.2.1"
+    "unzip-stream": "^0.2.1",
+    "yargs": "^10.0.3"
   }
 }

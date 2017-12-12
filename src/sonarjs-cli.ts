@@ -18,7 +18,24 @@
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 import { analyze, LogLevel, Issue } from "./analyzer";
+import * as yargs from "yargs";
 
+const argv = yargs
+  .alias('h', 'help')
+  .alias('v', 'version')
+  .usage('Usage: sonarjs [options]')
+  .example("sonarjs -e '**/test/**/*, **/*.test.js'", "Runs analysis excluding test files")
+  .option('exclusions', {
+    alias: 'e',
+    describe: 'List of file path patterns to be excluded from analysis of JavaScript files.',
+    type: 'string'
+  })
+  .help('h')
+  .argv
+;
+
+const exclusions: string | undefined = argv.exclusions || undefined;
+console.log(exclusions);
 const projectHome = process.cwd();
 const analyzingMessage = " Analyzing " + projectHome;
 
