@@ -49,11 +49,7 @@ public class SonarLintFactory {
       .resolve(GLOBAL_CONFIGURATION_FILENAME);
   }
 
-  public SonarLint createSonarLint() {
-    return createStandalone();
-  }
-
-  private static SonarLint createStandalone() {
+  public StandaloneSonarLint createSonarLint() {
     URL[] plugins;
 
     try {

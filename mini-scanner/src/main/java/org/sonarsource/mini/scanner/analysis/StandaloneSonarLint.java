@@ -19,12 +19,16 @@
  */
 package org.sonarsource.mini.scanner.analysis;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.sonarsource.mini.scanner.InputFileFinder;
+import org.sonarsource.mini.scanner.report.JsonReporter;
+import org.sonarsource.mini.scanner.util.Logger;
 import org.sonarsource.sonarlint.core.client.api.common.RuleDetails;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile;
@@ -33,15 +37,31 @@ import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintE
 import org.sonarsource.sonarlint.core.tracking.IssueTrackable;
 import org.sonarsource.sonarlint.core.tracking.Trackable;
 
-public class StandaloneSonarLint extends SonarLint {
+public class StandaloneSonarLint {
+  private static final Logger LOGGER = Logger.get();
+
   private final StandaloneSonarLintEngine engine;
 
   public StandaloneSonarLint(StandaloneSonarLintEngine engine) {
     this.engine = engine;
   }
 
-  @Override
-  protected void doAnalysis(Map<String, String> properties, List<ClientInputFile> inputFiles, Path baseDirPath) {
+  public void runAnalysis(Map<String, String> properties, InputFileFinder finder, Path projectHome) {
+    List<ClientInputFile> inputFiles;
+    try {
+      inputFiles = finder.collect(projectHome);
+    } catch (IOException e) {
+      throw new IllegalStateException("Error preparing list of files to analyze", e);
+    }
+
+    doAnalysis(properties, inputFiles, projectHome);
+  }
+
+  private final void generateReports(Collection<Trackable> trackables, AnalysisResults result, String projectName, Date date) {
+    new JsonReporter(System.out).execute(projectName, date, trackables, result, this::getRuleDetails);
+  }
+
+  private void doAnalysis(Map<String, String> properties, List<ClientInputFile> inputFiles, Path baseDirPath) {
     Date start = new Date();
 
     IssueCollector collector = new IssueCollector();
@@ -52,12 +72,10 @@ public class StandaloneSonarLint extends SonarLint {
     generateReports(trackables, result, baseDirPath.getFileName().toString(), start);
   }
 
-  @Override
-  protected RuleDetails getRuleDetails(String ruleKey) {
+  private RuleDetails getRuleDetails(String ruleKey) {
     return engine.getRuleDetails(ruleKey);
   }
 
-  @Override
   public void stop() {
     engine.stop();
   }

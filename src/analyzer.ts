@@ -28,10 +28,7 @@ const jarFile = path.join(home, `mini-scanner-${projectVersion}.jar`);
 
 export async function analyze(
   projectHome: String,
-  log: Logger = (message: string, logLevel: LogLevel) => {},
-  onStart: () => void = () => {},
-  onEnd: () => void = () => {}
-) {
+  { log = (message: string, logLevel: LogLevel) => { }, onStart = () => { }, onEnd = () => { }, exclusions = "" }: AnalysisOptions) {
   const driver = await jre.install(log);
   onStart();
 
@@ -41,7 +38,7 @@ export async function analyze(
     `-Dsonarlint.home=${home}`,
     `-Dproject.home=${projectHome}`,
     "org.sonarsource.mini.scanner.Main",
-    ...process.argv
+    "--exclusions=" + exclusions
   ]);
 
   let result = "";
@@ -83,3 +80,10 @@ export interface Position {
 
 export type Logger = (message: string, logLevel: LogLevel) => void;
 export type LogLevel = "INFO" | "WARN" | "ERROR";
+
+export interface AnalysisOptions {
+  log?: Logger,
+  onStart?: () => void,
+  onEnd?: () => void,
+  exclusions?: string
+}
