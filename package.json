@@ -1,11 +1,11 @@
 {
   "name": "sonarjs",
-  "version": "0.2.0-7",
+  "version": "0.2.0-8",
   "description": "SonarJS npm module",
   "directories": {
     "lib": "lib"
   },
-  "main" : "./lib/index.js",
+  "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "bin": "./bin/sonarjs",
   "scripts": {
