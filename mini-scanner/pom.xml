@@ -31,7 +31,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <gitRepositoryName>sonarjs-cli</gitRepositoryName>
     <sonarlint.version>3.0.0.1140</sonarlint.version>
-    <sonar.javascript.version>4.0.0.5840</sonar.javascript.version>
+    <sonar.javascript.version>4.0.0.5862</sonar.javascript.version>
     <!-- Release: enable publication to Bintray -->
   </properties>
 
