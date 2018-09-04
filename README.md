@@ -1,4 +1,4 @@
-# SonarJS [![Build Status](https://travis-ci.org/SonarSource/sonarjs-cli.svg?branch=master)](https://travis-ci.org/SonarSource/sonarjs-cli) [![NPM version](https://badge.fury.io/js/sonarjs.svg)](http://badge.fury.io/js/sonarjs)
+# [DEPRECATED] SonarJS [![Build Status](https://travis-ci.org/SonarSource/sonarjs-cli.svg?branch=master)](https://travis-ci.org/SonarSource/sonarjs-cli) [![NPM version](https://badge.fury.io/js/sonarjs.svg)](http://badge.fury.io/js/sonarjs)
 
 [This package](https://www.npmjs.com/package/sonarjs) allows to use the [SonarJS](https://github.com/SonarSource/sonarjs) analyzer as a command line tool and as a JavaScript/TypeScript library.
 
